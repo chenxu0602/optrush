@@ -1,0 +1,16 @@
+[package]
+name = "optrush"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pyo3 = { version = "0.18", features = ["extension-module"] }
+statrs = "0.15"
+
+[lib]
+name = "optrush"
+crate-type = ["cdylib"]
+path = "rust/models.rs"
+
+[build-dependencies]
+regex = "1"
