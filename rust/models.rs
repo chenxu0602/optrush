@@ -49,7 +49,7 @@ fn bs_put_delta(s: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
 
 #[pyfunction]
 fn bs_gamma(s: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
-    norm_cdf(bs_d1(s, k, t, r, sigma)) / (s * sigma * t.sqrt())
+    norm_pdf(bs_d1(s, k, t, r, sigma)) / (s * sigma * t.sqrt())
 }
 
 #[pyfunction]
@@ -122,7 +122,7 @@ fn bk_put_delta(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
 #[pyfunction]
 fn bk_gamma(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
     let d1 = bk_d1(f, k, t, sigma);
-    (-r * t).exp() * f * norm_pdf(d1) / (f * sigma * t.sqrt())
+    (-r * t).exp() * norm_pdf(d1) / (f * sigma * t.sqrt())
 }
 
 #[pyfunction]
