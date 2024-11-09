@@ -14,3 +14,6 @@ path = "rust/models.rs"
 
 [build-dependencies]
 regex = "1"
+
+[package.metadata.maturin]
+name = "optrush"
