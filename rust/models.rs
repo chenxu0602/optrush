@@ -186,6 +186,108 @@ fn implied_volatility(
     Ok(sigma)
 }
 
+// #[pymodule]
+// fn optrush(_py: Python, m: &PyModule) -> PyResult<()> {
+//     m.add_function(wrap_pyfunction!(norm_cdf, m)?)?;
+//     m.add_function(wrap_pyfunction!(norm_pdf, m)?)?;
+//     m.add_function(wrap_pyfunction!(bs_d1, m)?)?;
+//     m.add_function(wrap_pyfunction!(bs_d2, m)?)?;
+//     m.add_function(wrap_pyfunction!(bs_call_price, m)?)?;
+//     m.add_function(wrap_pyfunction!(bs_put_price, m)?)?;
+//     m.add_function(wrap_pyfunction!(bs_call_delta, m)?)?;
+//     m.add_function(wrap_pyfunction!(bs_put_delta, m)?)?;
+//     m.add_function(wrap_pyfunction!(bs_gamma, m)?)?;
+//     m.add_function(wrap_pyfunction!(bs_vega, m)?)?;
+//     m.add_function(wrap_pyfunction!(bs_call_theta, m)?)?;
+//     m.add_function(wrap_pyfunction!(bs_put_theta, m)?)?;
+//     m.add_function(wrap_pyfunction!(bs_call_rho, m)?)?;
+//     m.add_function(wrap_pyfunction!(bs_put_rho, m)?)?;
+//     m.add_function(wrap_pyfunction!(bk_d1, m)?)?;
+//     m.add_function(wrap_pyfunction!(bk_d2, m)?)?;
+//     m.add_function(wrap_pyfunction!(bk_call_price, m)?)?;
+//     m.add_function(wrap_pyfunction!(bk_put_price, m)?)?;
+//     m.add_function(wrap_pyfunction!(bk_call_delta, m)?)?;
+//     m.add_function(wrap_pyfunction!(bk_put_delta, m)?)?;
+//     m.add_function(wrap_pyfunction!(bk_gamma, m)?)?;
+//     m.add_function(wrap_pyfunction!(bk_vega, m)?)?;
+//     m.add_function(wrap_pyfunction!(bk_call_theta, m)?)?;
+//     m.add_function(wrap_pyfunction!(bk_put_theta, m)?)?;
+//     m.add_function(wrap_pyfunction!(bk_call_rho, m)?)?;
+//     m.add_function(wrap_pyfunction!(bk_put_rho, m)?)?;
+//     m.add_function(wrap_pyfunction!(implied_volatility, m)?)?;
+//     Ok(())
+// }
+
+#[pyfunction]
+fn bach_d(f: f64, k: f64, t: f64, sigma: f64) -> f64 {
+    (f - k) / (sigma * t.sqrt())
+}
+
+#[pyfunction]
+fn bach_call_price(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
+    let d = bach_d(f, k, t, sigma);
+    (-r * t).exp() * ((f - k) * norm_cdf(d) + sigma * t.sqrt() * norm_pdf(d))
+}
+
+#[pyfunction]
+fn bach_put_price(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
+    let d = bach_d(f, k, t, sigma);
+    (-r * t).exp() * ((k - f) * norm_cdf(-d) + sigma * t.sqrt() * norm_pdf(d))
+}
+
+#[pyfunction]
+fn bach_call_delta(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
+    let d = bach_d(f, k, t, sigma);
+    (-r * t).exp() * norm_cdf(d)
+}
+
+#[pyfunction]
+fn bach_put_delta(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
+    let d = bach_d(f, k, t, sigma);
+    -(-r * t).exp() * norm_cdf(-d)
+}
+
+#[pyfunction]
+fn bach_gamma(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
+    let d = bach_d(f, k, t, sigma);
+    (-r * t).exp() * norm_pdf(d) / (sigma * t.sqrt())
+}
+
+#[pyfunction]
+fn bach_vega(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
+    let d = bach_d(f, k, t, sigma);
+    (-r * t).exp() * t.sqrt() * norm_pdf(d)
+}
+
+#[pyfunction]
+fn bach_call_theta(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
+    let d = bach_d(f, k, t, sigma);
+    let term1 = -0.5 * (-r * t).exp() * sigma * norm_pdf(d) / t.sqrt();
+    let term2 = r * (-r * t).exp() * ((f - k) * norm_cdf(d) + sigma * t.sqrt() * norm_pdf(d));
+    term1 + term2
+}
+
+#[pyfunction]
+fn bach_put_theta(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
+    let d = bach_d(f, k, t, sigma);
+    let term1 = -0.5 * (-r * t).exp() * sigma * norm_pdf(d) / t.sqrt();
+    let term2 = r * (-r * t).exp() * ((k - f) * norm_cdf(-d) + sigma * t.sqrt() * norm_pdf(d));
+    term1 + term2
+}
+
+#[pyfunction]
+fn bach_call_rho(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
+    let d = bach_d(f, k, t, sigma);
+    t * (-r * t).exp() * ((f - k) * norm_cdf(d) + sigma * t.sqrt() * norm_pdf(d))
+}
+
+#[pyfunction]
+fn bach_put_rho(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
+    let d = bach_d(f, k, t, sigma);
+    -t * (-r * t).exp() * ((k - f) * norm_cdf(-d) + sigma * t.sqrt() * norm_pdf(d))
+}
+
+// Register the new functions in the module
 #[pymodule]
 fn optrush(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(norm_cdf, m)?)?;
@@ -214,6 +316,17 @@ fn optrush(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(bk_put_theta, m)?)?;
     m.add_function(wrap_pyfunction!(bk_call_rho, m)?)?;
     m.add_function(wrap_pyfunction!(bk_put_rho, m)?)?;
+    m.add_function(wrap_pyfunction!(bach_d, m)?)?;
+    m.add_function(wrap_pyfunction!(bach_call_price, m)?)?;
+    m.add_function(wrap_pyfunction!(bach_put_price, m)?)?;
+    m.add_function(wrap_pyfunction!(bach_call_delta, m)?)?;
+    m.add_function(wrap_pyfunction!(bach_put_delta, m)?)?;
+    m.add_function(wrap_pyfunction!(bach_gamma, m)?)?;
+    m.add_function(wrap_pyfunction!(bach_vega, m)?)?;
+    m.add_function(wrap_pyfunction!(bach_call_theta, m)?)?;
+    m.add_function(wrap_pyfunction!(bach_put_theta, m)?)?;
+    m.add_function(wrap_pyfunction!(bach_call_rho, m)?)?;
+    m.add_function(wrap_pyfunction!(bach_put_rho, m)?)?;
     m.add_function(wrap_pyfunction!(implied_volatility, m)?)?;
     Ok(())
 }

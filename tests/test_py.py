@@ -225,3 +225,16 @@ def test_implied_vol_from_bk_put_02():
     bk_put = models.bk_put_price(f, k, t, r, sigma)
     implied_vol = models.implied_volatility(f, k, t, r, bk_put, models.bk_put_price, models.bk_vega, 0.2, 1e-5, 100)
     assert f'{implied_vol:.2f}' == f'{sigma:.2f}'
+
+
+def test_bach_call_price_01(): assert f'{models.bach_call_price(13.78, 12, 0.063, 0, 39.507504):.2f}'      == '4.91'
+def test_bach_call_price_02(): assert f'{models.bach_call_price(25.78, 25.5, 0.00822, 0, 30.5340869):.2f}' == '1.25'
+
+def test_bach_put_price_01(): assert f'{models.bach_put_price(42.97, 42.5, 0.057534, 0, 11.6973553):.2f}'  == '0.90'
+def test_bach_put_price_02(): assert f'{models.bach_put_price(20.69, 22, 0.15616, 0, 30.6166935):.2f}'     == '5.51'
+
+def test_bach_call_delta_01(): assert f'{models.bach_call_delta(13.78, 12, 0.063, 0, 39.507504):.2f}'      == '0.57'
+def test_bach_call_delta_02(): assert f'{models.bach_call_delta(25.78, 25.5, 0.00822, 0, 30.5340869):.2f}' == '0.54'
+
+def test_bach_put_delta_01(): assert f'{models.bach_put_delta(42.97, 42.5, 0.057534, 0, 11.6973553):.2f}'  == '-0.43'
+def test_bach_put_delta_02(): assert f'{models.bach_put_delta(20.69, 22, 0.15616, 0, 30.6166935):.2f}'     == '-0.54'

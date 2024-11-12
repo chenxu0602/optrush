@@ -177,3 +177,72 @@ def implied_volatility(
             return sigma
         sigma += diff / vega_function(p, k, t, r, sigma)
     return sigma
+
+
+# Bachelier Model Functions
+def bach_d(f, k, t, sigma):
+    return (f - k) / (sigma * math.sqrt(t))
+
+
+def bach_call_price(f, k, t, r, sigma):
+    """Calculate the Bachelier model price for a European call option."""
+    d = bach_d(f, k, t, sigma)
+    return math.exp(-r * t) * ((f - k) * norm_cdf(d) + sigma * math.sqrt(t) * norm_pdf(d))
+
+
+def bach_put_price(f, k, t, r, sigma):
+    """Calculate the Bachelier model price for a European put option."""
+    d = bach_d(f, k, t, sigma)
+    return math.exp(-r * t) * ((k - f) * norm_cdf(-d) + sigma * math.sqrt(t) * norm_pdf(d))
+
+
+def bach_call_delta(f, k, t, r, sigma):
+    """Calculate the delta of a call option using the Bachelier model."""
+    d = bach_d(f, k, t, sigma)
+    return math.exp(-r * t) * norm_cdf(d)
+
+
+def bach_put_delta(f, k, t, r, sigma):
+    """Calculate the delta of a put option using the Bachelier model."""
+    d = bach_d(f, k, t, sigma)
+    return -math.exp(-r * t) * norm_cdf(-d)
+
+
+def bach_gamma(f, k, t, r, sigma):
+    """Calculate Gamma for both call and put options using the Bachelier model."""
+    d = bach_d(f, k, t, sigma)
+    return math.exp(-r * t) * norm_pdf(d) / (sigma * math.sqrt(t))
+
+
+def bach_vega(f, k, t, r, sigma):
+    """Calculate Vega for both call and put options using the Bachelier model."""
+    d = bach_d(f, k, t, sigma)
+    return math.exp(-r * t) * math.sqrt(t) * norm_pdf(d)
+
+
+def bach_call_theta(f, k, t, r, sigma):
+    """Calculate Theta for a call option using the Bachelier model."""
+    d = bach_d(f, k, t, sigma)
+    term1 = -0.5 * math.exp(-r * t) * sigma * norm_pdf(d) / math.sqrt(t)
+    term2 = r * math.exp(-r * t) * ((f - k) * norm_cdf(d) + sigma * math.sqrt(t) * norm_pdf(d))
+    return term1 + term2
+
+
+def bach_put_theta(f, k, t, r, sigma):
+    """Calculate Theta for a put option using the Bachelier model."""
+    d = bach_d(f, k, t, sigma)
+    term1 = -0.5 * math.exp(-r * t) * sigma * norm_pdf(d) / math.sqrt(t)
+    term2 = r * math.exp(-r * t) * ((k - f) * norm_cdf(-d) + sigma * math.sqrt(t) * norm_pdf(d))
+    return term1 + term2
+
+
+def bach_call_rho(f, k, t, r, sigma):
+    """Calculate Rho for a call option using the Bachelier model."""
+    d = bach_d(f, k, t, sigma)
+    return t * math.exp(-r * t) * ((f - k) * norm_cdf(d) + sigma * math.sqrt(t) * norm_pdf(d))
+
+
+def bach_put_rho(f, k, t, r, sigma):
+    """Calculate Rho for a put option using the Bachelier model."""
+    d = bach_d(f, k, t, sigma)
+    return -t * math.exp(-r * t) * ((k - f) * norm_cdf(-d) + sigma * math.sqrt(t) * norm_pdf(d))

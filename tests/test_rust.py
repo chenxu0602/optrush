@@ -38,6 +38,7 @@ def test_call_price():
                     for k in [s - 8, s + 10]:
                         assert f'{models.bs_call_price(s, k, t, r, sigma):.5f}' == f'{optrush.bs_call_price(s, k, t, r, sigma):.5f}'
                         assert f'{models.bk_call_price(s, k, t, r, sigma):.5f}' == f'{optrush.bk_call_price(s, k, t, r, sigma):.5f}'
+                        assert f'{models.bach_call_price(s, k, t, r, sigma):.5f}' == f'{optrush.bach_call_price(s, k, t, r, sigma):.5f}'
 
 def test_put_price():
     for r in [0, 0.05, 0.1, 0.2]:
@@ -48,6 +49,7 @@ def test_put_price():
                     for k in [s - 8, s + 10]:
                         assert f'{models.bs_put_price(s, k, t, r, sigma):.5f}' == f'{optrush.bs_put_price(s, k, t, r, sigma):.5f}'
                         assert f'{models.bk_put_price(s, k, t, r, sigma):.5f}' == f'{optrush.bk_put_price(s, k, t, r, sigma):.5f}'
+                        assert f'{models.bach_put_price(s, k, t, r, sigma):.5f}' == f'{optrush.bach_put_price(s, k, t, r, sigma):.5f}'
 
 def test_gamma_vega():
     for r in [0, 0.05, 0.1, 0.2]:
@@ -58,8 +60,10 @@ def test_gamma_vega():
                     for k in [s - 8, s + 10]:
                         assert f'{models.bs_gamma(s, k, t, r, sigma):.5f}' == f'{optrush.bs_gamma(s, k, t, r, sigma):.5f}'
                         assert f'{models.bk_gamma(f, k, t, r, sigma):.5f}' == f'{optrush.bk_gamma(f, k, t, r, sigma):.5f}'
+                        assert f'{models.bach_gamma(f, k, t, r, sigma):.5f}' == f'{optrush.bach_gamma(f, k, t, r, sigma):.5f}'
                         assert f'{models.bs_vega(s, k, t, r, sigma):.5f}'  == f'{optrush.bs_vega(s, k, t, r, sigma):.5f}'
                         assert f'{models.bk_vega(f, k, t, r, sigma):.5f}'  == f'{optrush.bk_vega(f, k, t, r, sigma):.5f}'
+                        assert f'{models.bach_vega(f, k, t, r, sigma):.5f}'  == f'{optrush.bach_vega(f, k, t, r, sigma):.5f}'
 
 def test_rho():
     for r in [0, 0.05, 0.1, 0.2]:
@@ -72,6 +76,8 @@ def test_rho():
                         assert f'{models.bs_put_rho(s, k, t, r, sigma):.4f}'  == f'{optrush.bs_put_rho(s, k, t, r, sigma):.4f}'
                         assert f'{models.bk_call_rho(f, k, t, r, sigma):.4f}' == f'{optrush.bk_call_rho(f, k, t, r, sigma):.4f}'
                         assert f'{models.bk_put_rho(f, k, t, r, sigma):.4f}'  == f'{optrush.bk_put_rho(f, k, t, r, sigma):.4f}'
+                        assert f'{models.bach_call_rho(f, k, t, r, sigma):.4f}' == f'{optrush.bach_call_rho(f, k, t, r, sigma):.4f}'
+                        assert f'{models.bach_put_rho(f, k, t, r, sigma):.4f}'  == f'{optrush.bach_put_rho(f, k, t, r, sigma):.4f}'
 
 def test_theta():
     for r in [0, 0.05, 0.1, 0.2]:
@@ -84,3 +90,5 @@ def test_theta():
                         assert f'{models.bs_put_theta(s, k, t, r, sigma):.4f}'  == f'{optrush.bs_put_theta(s, k, t, r, sigma):.4f}'
                         assert f'{models.bk_call_theta(f, k, t, r, sigma):.4f}' == f'{optrush.bk_call_theta(f, k, t, r, sigma):.4f}'
                         assert f'{models.bk_put_theta(f, k, t, r, sigma):.4f}'  == f'{optrush.bk_put_theta(f, k, t, r, sigma):.4f}'
+                        assert f'{models.bach_call_theta(f, k, t, r, sigma):.4f}' == f'{optrush.bach_call_theta(f, k, t, r, sigma):.4f}'
+                        assert f'{models.bach_put_theta(f, k, t, r, sigma):.4f}'  == f'{optrush.bach_put_theta(f, k, t, r, sigma):.4f}'
