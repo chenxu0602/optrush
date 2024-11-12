@@ -21,6 +21,7 @@ mypy = "^1.13.0"
 lxml = "^5.3.0"
 pytest = "^8.3.3"
 coverage = "^7.6.4"
+maturin = "^1.7.4"
 
 [build-system]
 requires = ["poetry-core"]
