@@ -160,65 +160,6 @@ fn bk_put_theta(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
 }
 
 #[pyfunction]
-fn implied_volatility(
-    p: f64,
-    k: f64,
-    t: f64,
-    r: f64,
-    market_price: f64,
-    price_function: PyObject,
-    vega_function: PyObject,
-    sigma: f64,
-    tol: f64,
-    max_iteration: usize,
-    py: Python
-) -> PyResult<f64> {
-    let mut sigma = sigma;
-    for _ in 0..max_iteration {
-        let price: f64 = price_function.call1(py, (p, k, t, r, sigma))?.extract(py)?;
-        let diff = market_price - price;
-        if diff.abs() < tol {
-            return Ok(sigma);
-        }
-        let vega: f64 = vega_function.call1(py, (p, k, t, r, sigma))?.extract(py)?;
-        sigma += diff / vega;
-    }
-    Ok(sigma)
-}
-
-// #[pymodule]
-// fn optrush(_py: Python, m: &PyModule) -> PyResult<()> {
-//     m.add_function(wrap_pyfunction!(norm_cdf, m)?)?;
-//     m.add_function(wrap_pyfunction!(norm_pdf, m)?)?;
-//     m.add_function(wrap_pyfunction!(bs_d1, m)?)?;
-//     m.add_function(wrap_pyfunction!(bs_d2, m)?)?;
-//     m.add_function(wrap_pyfunction!(bs_call_price, m)?)?;
-//     m.add_function(wrap_pyfunction!(bs_put_price, m)?)?;
-//     m.add_function(wrap_pyfunction!(bs_call_delta, m)?)?;
-//     m.add_function(wrap_pyfunction!(bs_put_delta, m)?)?;
-//     m.add_function(wrap_pyfunction!(bs_gamma, m)?)?;
-//     m.add_function(wrap_pyfunction!(bs_vega, m)?)?;
-//     m.add_function(wrap_pyfunction!(bs_call_theta, m)?)?;
-//     m.add_function(wrap_pyfunction!(bs_put_theta, m)?)?;
-//     m.add_function(wrap_pyfunction!(bs_call_rho, m)?)?;
-//     m.add_function(wrap_pyfunction!(bs_put_rho, m)?)?;
-//     m.add_function(wrap_pyfunction!(bk_d1, m)?)?;
-//     m.add_function(wrap_pyfunction!(bk_d2, m)?)?;
-//     m.add_function(wrap_pyfunction!(bk_call_price, m)?)?;
-//     m.add_function(wrap_pyfunction!(bk_put_price, m)?)?;
-//     m.add_function(wrap_pyfunction!(bk_call_delta, m)?)?;
-//     m.add_function(wrap_pyfunction!(bk_put_delta, m)?)?;
-//     m.add_function(wrap_pyfunction!(bk_gamma, m)?)?;
-//     m.add_function(wrap_pyfunction!(bk_vega, m)?)?;
-//     m.add_function(wrap_pyfunction!(bk_call_theta, m)?)?;
-//     m.add_function(wrap_pyfunction!(bk_put_theta, m)?)?;
-//     m.add_function(wrap_pyfunction!(bk_call_rho, m)?)?;
-//     m.add_function(wrap_pyfunction!(bk_put_rho, m)?)?;
-//     m.add_function(wrap_pyfunction!(implied_volatility, m)?)?;
-//     Ok(())
-// }
-
-#[pyfunction]
 fn bach_d(f: f64, k: f64, t: f64, sigma: f64) -> f64 {
     (f - k) / (sigma * t.sqrt())
 }
@@ -286,6 +227,35 @@ fn bach_put_rho(f: f64, k: f64, t: f64, r: f64, sigma: f64) -> f64 {
     let d = bach_d(f, k, t, sigma);
     -t * (-r * t).exp() * ((k - f) * norm_cdf(-d) + sigma * t.sqrt() * norm_pdf(d))
 }
+
+
+#[pyfunction]
+fn implied_volatility(
+    p: f64,
+    k: f64,
+    t: f64,
+    r: f64,
+    market_price: f64,
+    price_function: PyObject,
+    vega_function: PyObject,
+    sigma: f64,
+    tol: f64,
+    max_iteration: usize,
+    py: Python
+) -> PyResult<f64> {
+    let mut sigma = sigma;
+    for _ in 0..max_iteration {
+        let price: f64 = price_function.call1(py, (p, k, t, r, sigma))?.extract(py)?;
+        let diff = market_price - price;
+        if diff.abs() < tol {
+            return Ok(sigma);
+        }
+        let vega: f64 = vega_function.call1(py, (p, k, t, r, sigma))?.extract(py)?;
+        sigma += diff / vega;
+    }
+    Ok(sigma)
+}
+
 
 #[pymodule]
 fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
