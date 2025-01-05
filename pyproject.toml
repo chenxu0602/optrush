@@ -1,0 +1,31 @@
+[project]
+name = "optrush"
+version = "0.1.0"
+description = "Option pricing with Python & Rust"
+readme = "README.md"
+authors = [
+    { name = "chenxu", email = "chen.xu.wq@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.2.1",
+    "pandas>=2.2.3",
+    "scipy>=1.15.0",
+]
+
+[project.scripts]
+optrush = "optrush:main"
+
+[tool.maturin]
+module-name = "optrush._core"
+python-packages = ["optrush"]
+python-source = "src"
+
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4",
+]
